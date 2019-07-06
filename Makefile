@@ -1,28 +1,31 @@
-# cleanup deps and download missing ones
+# cleanup dependencies and download missing ones
 .PHONY: deps
 deps:
 	go mod tidy
 	go mod download
 
-# update patch version for dependencies
+# run dependency cleanup, followed by updating the patch version
 .PHONY: deps-update
 deps-update: deps
 	go get -u=patch
-
-
+	
 # run tests
 .PHONY: tests
 tests:
 	go test -race -cover -count 1 ./...
 
-# run standard go tooling for better readability
+# run standard go tooling for better rcode hygiene
 .PHONY: tidy
-tidy: imports
+tidy: imports fmt
 	go vet ./...
 	golint ./...
-	go fmt ./...
 
-# format all code with automatic imports
+# automatically add missing imports
 .PHONY: imports
 imports:
 	find . -type f -name '*.go' -exec goimports -w {} \;
+
+# format code and simplify if possible
+.PHONY: fmt
+fmt:
+	find . -type f -name '*.go' -exec gofmt -s -w {} \;
