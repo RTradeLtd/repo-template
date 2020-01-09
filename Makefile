@@ -29,3 +29,9 @@ imports:
 .PHONY: fmt
 fmt:
 	find . -type f -name '*.go' -exec gofmt -s -w {} \;
+
+verifiers: staticcheck
+
+staticcheck:
+	@echo "Running $@ check"
+	@GO111MODULE=on ${GOPATH}/bin/staticcheck ./...
